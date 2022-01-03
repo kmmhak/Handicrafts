@@ -1,0 +1,161 @@
+Kaikki käyttäjät:
+    POST käyttäjän luominen
+    POST login
+    POST myynti-ilmoitusten teko
+    POST ostojen teko ja jonottaminen
+
+    DELETE oman käyttäjätunnuksen poistaminen
+    DELETE oman myyntikohteen poistaminen
+
+    GET kaikkien kohteiden haku
+    GET omien myyntikohteiden haku
+    GET toisen käyttäjän myyntikohteiden haku
+    GET haku otsikon/osaston/kuvauksen perusteella
+    GET omien ostojen ja jonotettavien tavaroiden haku
+
+    PUT käyttäjän omien ilmoitusten päivittäminen
+    PUT käyttäjän omien tietojen päivittäminen
+
+Admin
+    DELETE kaikkien käyttäjien poistaminen
+    DELETE kaikkien myyntikohteiden poistaminen
+    DELETE kaikkien tarjousten poistaminen
+
+    PUT kaikkien käyttäjien ilmoitusten muuttaminen
+
+Master
+    PUT admin-oikeuksien antaminen
+
+
+TIETOKANNAN LUONTI
+
+create type roleEnum as enum ('regular', 'admin', 'master');
+
+CREATE TABLE if NOT EXISTS client(
+client_id serial primary key,
+client_fname varchar(30) not null,
+client_lname varchar(30) not null,
+client_zip_code int not null,
+client_email varchar not null,
+username varchar(30) not null,
+password varchar(30) not null,
+role roleEnum default null
+);
+
+INSERT INTO client(client_fname, client_lname, client_zip_code, client_email, username, password,role)
+VALUES
+('Kari', 'Kiituri', '36200', 'karikiituri@example.com', 'kaki', 'qwerty', 'regular'),
+('Miina', 'Maatila', '00000', 'miinamaatila@example.com', 'mima', 'qwerty', 'regular')
+;
+
+CREATE TABLE category (
+category_id serial primary key,
+category_name varchar(50)
+);
+
+INSERT INTO category(category_name)
+VALUES
+('Kankaat'),
+('Ompelutarvikkeet'),
+('Neulelangat'),
+('Neuletarvikkeet'),
+('Nypläystarvikkeet')
+;
+
+CREATE TABLE subcategory (
+subcategory_id serial primary key,
+subcategory_name varchar(50)
+);
+
+INSERT INTO subcategory(subcategory_name)
+VALUES
+('Trikoo'),
+('Puuvilla'),
+('Pellava'),
+('Scuba'),
+('Viskoosi'),
+('Ompelulangat'),
+('Tukikankaat'),
+('Sakset'),
+('Napit'),
+('Vetoketjut'),
+('Ompelukonetarvikkeet'),
+('Mitat'),
+('Villalangat'),
+('Puuvillalangat'),
+('Keinokuitulangat'),
+('Puikot'),
+('Virkkuukoukut'),
+('Muut neuletarvikkeet'),
+('Nypläystyynyt'),
+('Nypylät'),
+('Muut nypläystarvikkeet')
+;
+
+
+create type unitEnum as enum ('kpl', 'cm');
+
+CREATE TABLE product(
+product_id serial primary key,
+product_name varchar(50) not NULL,
+product_brand varchar(30),
+product_photo varchar,
+product_length int not NULL,
+product_unit unitEnum default null,
+product_color varchar(30),
+product_description varchar not NULL,
+product_price float not null,
+fk_category_id int not NULL,
+fk_subcategory_id int not NULL,
+CONSTRAINT fk_category_id
+	FOREIGN KEY(fk_category_id)
+		REFERENCES category(category_id)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE,
+CONSTRAINT fk_subcategory_id
+	FOREIGN KEY(fk_subcategory_id)
+		REFERENCES subcategory(subcategory_id)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE
+);
+
+INSERT INTO product (product_name, product_brand, product_photo, product_length, product_unit, product_color, product_description, product_price, fk_category_id, fk_subcategory_id)
+VALUES
+('Vetoketju', NULL, 'https://ibb.co/cyvYpQg', '15', 'cm', 'punainen', 'Punainen pitsivetoketju, 15 cm pitkä. Ovh 2€, nyt puoleen hintaan', '1', '2', '10')
+('Vihreitä nappeja', NULL, 'https://ibb.co/s25F60h', '1', 'cm', 'vihreä', 'Lajitelma vihreitä nappeja, noin 1 cm halkaisija', '1.5', '2', '9'),
+('Metsolan bunny kangas', 'Metsola', 'https://ibb.co/DpDvkjb', '150', 'cm', 'vaaleansininen', 'Suosittu Metsolan pupukangas, pesemätön ja virheetön. 1,5m', '39', '1', '1'),
+('Uusia nypylöitä 100 kpl', NULL, 'https://ibb.co/GWQmB0r', '12', 'cm', 'puunvärinen', 'Käyttämättömiä nypylöitä', '79', '5', '20')
+;
+
+create table bid (
+bid_id serial primary key,
+fk_product_id int,
+fk_user_id int,
+bid_time timestamp
+);
+
+create table bid (
+bid_id serial primary key,
+fk_product_id int,
+fk_client_id int,
+bid_time timestamp,
+CONSTRAINT fk_product_id
+	FOREIGN KEY(fk_product_id)
+		REFERENCES product(product_id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+CONSTRAINT fk_client_id
+	FOREIGN KEY(fk_client_id)
+		REFERENCES client(client_id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+);
+
+INSERT INTO bid (fk_product_id, fk_client_id, bid_time)
+VALUES
+('1', '1', CURRENT_TIMESTAMP),
+('1', '2', CURRENT_TIMESTAMP + '1 minute'),
+('2', '1', CURRENT_TIMESTAMP),
+('3', '2', CURRENT_TIMESTAMP + '1 hour')
+;
+
