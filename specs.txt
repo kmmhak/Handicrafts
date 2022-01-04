@@ -1,6 +1,11 @@
 Kaikki käyttäjät:
-    POST käyttäjän luominen
-    POST login
+ ✓   GET kaikkien kohteiden haku
+
+ ✓   POST käyttäjän luominen
+
+Kaikki kirjautuneet käyttäjät:
+    
+ ✓   POST login 
     POST myynti-ilmoitusten teko
     POST ostojen teko ja jonottaminen
 
@@ -33,19 +38,18 @@ create type roleEnum as enum ('regular', 'admin', 'master');
 
 CREATE TABLE if NOT EXISTS client(
 client_id serial primary key,
-client_fname varchar(30) not null,
-client_lname varchar(30) not null,
-client_zip_code int not null,
+client_fname text not null,
+client_lname text not null,
 client_email varchar not null,
-username varchar(30) not null,
-password varchar(30) not null,
+username text not null,
+password text not null,
 role roleEnum default null
 );
 
-INSERT INTO client(client_fname, client_lname, client_zip_code, client_email, username, password,role)
+INSERT INTO client(client_fname, client_lname, client_email, username, password,role)
 VALUES
-('Kari', 'Kiituri', '36200', 'karikiituri@example.com', 'kaki', 'qwerty', 'regular'),
-('Miina', 'Maatila', '00000', 'miinamaatila@example.com', 'mima', 'qwerty', 'regular')
+('Kari', 'Kiituri', 'karikiituri@example.com', 'kaki', 'qwerty', 'regular'),
+('Miina', 'Maatila', 'miinamaatila@example.com', 'mima', 'qwerty', 'regular')
 ;
 
 CREATE TABLE category (
@@ -107,6 +111,7 @@ product_description varchar not NULL,
 product_price float not null,
 fk_category_id int not NULL,
 fk_subcategory_id int not NULL,
+fk_client_id int not NULL,
 CONSTRAINT fk_category_id
 	FOREIGN KEY(fk_category_id)
 		REFERENCES category(category_id)
@@ -117,22 +122,22 @@ CONSTRAINT fk_subcategory_id
 		REFERENCES subcategory(subcategory_id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
+ADD CONSTRAINT fk_client_id
+	FOREIGN KEY(fk_client_id)
+		REFERENCES client(client_id)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE
 );
 
 INSERT INTO product (product_name, product_brand, product_photo, product_length, product_unit, product_color, product_description, product_price, fk_category_id, fk_subcategory_id)
 VALUES
-('Vetoketju', NULL, 'https://ibb.co/cyvYpQg', '15', 'cm', 'punainen', 'Punainen pitsivetoketju, 15 cm pitkä. Ovh 2€, nyt puoleen hintaan', '1', '2', '10')
+('Vetoketju', NULL, 'https://ibb.co/cyvYpQg', '15', 'cm', 'punainen', 'Punainen pitsivetoketju, 15 cm pitkä. Ovh 2€, nyt puoleen hintaan', '1', '2', '10'),
 ('Vihreitä nappeja', NULL, 'https://ibb.co/s25F60h', '1', 'cm', 'vihreä', 'Lajitelma vihreitä nappeja, noin 1 cm halkaisija', '1.5', '2', '9'),
 ('Metsolan bunny kangas', 'Metsola', 'https://ibb.co/DpDvkjb', '150', 'cm', 'vaaleansininen', 'Suosittu Metsolan pupukangas, pesemätön ja virheetön. 1,5m', '39', '1', '1'),
 ('Uusia nypylöitä 100 kpl', NULL, 'https://ibb.co/GWQmB0r', '12', 'cm', 'puunvärinen', 'Käyttämättömiä nypylöitä', '79', '5', '20')
 ;
 
-create table bid (
-bid_id serial primary key,
-fk_product_id int,
-fk_user_id int,
-bid_time timestamp
-);
+
 
 create table bid (
 bid_id serial primary key,

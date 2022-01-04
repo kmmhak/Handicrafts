@@ -1,15 +1,29 @@
-import express, { response } from "express";
+import express, {json} from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import {dirname,join} from "path";
+import { fileURLToPath } from "url";
+import usersRouter from "./routes/users-routes.js";
+import authRouter from "./routes/auth-routes.js";
+
+dotenv.config();
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 5000;
+const corsOptions = {credentials: true, origin: process.env.URL || "*"};
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(cors(corsOptions));
+app.use(json());
+app.use(cookieParser());
 
-app.get("/", (req, res) => {
-    res.json({info: "Kauppa on auki"});
-});
+app.use("/", express.static(join(__dirname, "public")));
 
-app.listen(port, () => {
-    console.log(`App running on port ${port}`);
-});
+app.use("/users", usersRouter);
+app.use("/auth", authRouter);
+
+app.listen(PORT, () => 
+    console.log(`Server is listening on ${PORT}`
+    ));
