@@ -33,17 +33,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//app.use(flash());
-
-//app.get("/", (req, res) => {
-//    res.render("index");
-//});
 
 app.get("/", (req, res) => {
     res.status(200).json({message: "Welcome"});
 });
 
-//TOIMIII!!
+
 
 app.get("/users/myPage", checkAuthenticated,(req, res) => {
     res.status(200).json({message: `welcome to your page ${req.user.email}`});
@@ -125,20 +120,25 @@ app.get("/users/bidsByUser", (req, res) => {
     
 });
 
-/*
-app.get("/users/register", checkAuthenticated, (req, res) => {
-    res.render("register");
+app.post("/users/newProduct", checkAuthenticated, (req, res) => {
+    const { name, brand, photo, length, unit, color,description, price, category, subcategory } =req.body;
+    const user_id = req.user.id;
+ 
+    
+    pool.query(
+        `INSERT INTO products 
+        (name, brand, photo, length, unit, color, description, price, fk_categories_id, fk_subcategories_id, fk_users_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, 
+        [name, brand, photo, length, unit, color,description, price, category, subcategory, user_id],
+        (err, results) => {
+            if (err) {
+                throw err;
+            }
+        
+            res.status(200).json({message: "product added successfully"});
+        }
+    ); 
 });
-
-app.get("/users/login", checkAuthenticated, (req, res) => {
-    res.render("login");
-});
-
-app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-    res.status(200).json({message: "registered"});
-    //res.render("dashboard", { user: req.user.name});
-});
-*/
 
 app.get("/users/logout", (req, res) => {
     req.logout();
@@ -189,7 +189,7 @@ app.post("/users/register", async (req, res) => {
 
                 if(results.rows.length > 0) {
                     res.status(400).json({message: "Email already in use"});
-                    //  res.render("register", {errors});
+                   
                 } else {
                     const role = "regular";
                     pool.query(
