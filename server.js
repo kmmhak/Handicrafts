@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
     res.status(200).json({message: "Welcome"});
 });
 
-//TOIMII!!!!!
+//TOIMIII!!
 
 app.get("/users/myPage", checkAuthenticated,(req, res) => {
     res.status(200).json({message: `welcome to your page ${req.user.email}`});
@@ -87,6 +87,44 @@ app.get("/users/waresByUser", (req, res) => {
     
 });
 
+app.get("/users/ownBids", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM bids
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
+});
+
+app.get("/users/bidsByUser", (req, res) => {
+    const user_id = req.body.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM bids
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
+});
+
 /*
 app.get("/users/register", checkAuthenticated, (req, res) => {
     res.render("register");
@@ -100,12 +138,12 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
     res.status(200).json({message: "registered"});
     //res.render("dashboard", { user: req.user.name});
 });
-
+*/
 
 app.get("/users/logout", (req, res) => {
     req.logout();
-    res.render("index", { message: "You have logged out successfully" });
-});*/
+    res.status(200).json({ message: "You have logged out successfully" });
+});
 
 app.post("/users/register", async (req, res) => {
     let {name, email, password, password2 } = req.body;
