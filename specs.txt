@@ -36,28 +36,22 @@ TIETOKANNAN LUONTI
 
 create type roleEnum as enum ('regular', 'admin', 'master');
 
-CREATE TABLE if NOT EXISTS client(
-client_id serial primary key,
-client_fname text not null,
-client_lname text not null,
-client_email varchar not null,
-username text not null,
-password text not null,
-role roleEnum default null
+create table users(
+id bigserial primary key NOT NULL,
+name varchar(200) NOT NULL,
+email varchar(200) NOT NULL,
+password varchar(200) NOT NULL,
+role roleEnum,
+UNIQUE (email)
 );
 
-INSERT INTO client(client_fname, client_lname, client_email, username, password,role)
-VALUES
-('Kari', 'Kiituri', 'karikiituri@example.com', 'kaki', 'qwerty', 'regular'),
-('Miina', 'Maatila', 'miinamaatila@example.com', 'mima', 'qwerty', 'regular')
-;
 
-CREATE TABLE category (
-category_id serial primary key,
-category_name varchar(50)
+CREATE TABLE categories (
+id serial primary key NOT NULL,
+name varchar(50) NOT NULL
 );
 
-INSERT INTO category(category_name)
+INSERT INTO categories(name)
 VALUES
 ('Kankaat'),
 ('Ompelutarvikkeet'),
@@ -66,12 +60,12 @@ VALUES
 ('Nypläystarvikkeet')
 ;
 
-CREATE TABLE subcategory (
-subcategory_id serial primary key,
-subcategory_name varchar(50)
+CREATE TABLE subcategories (
+id serial primary key NOT NULL,
+name varchar(50) NOT NULL
 );
 
-INSERT INTO subcategory(subcategory_name)
+INSERT INTO subcategories(name)
 VALUES
 ('Trikoo'),
 ('Puuvilla'),
@@ -99,28 +93,33 @@ VALUES
 
 create type unitEnum as enum ('kpl', 'cm');
 
-CREATE TABLE product(
-product_id serial primary key,
-product_name varchar(50) not NULL,
-product_brand varchar(30),
-product_photo varchar,
-product_length int not NULL,
-product_unit unitEnum default null,
-product_color varchar(30),
-product_description varchar not NULL,
-product_price float not null,
-fk_category_id int not NULL,
-fk_subcategory_id int not NULL,
-fk_client_id int not NULL,
-CONSTRAINT fk_category_id
-	FOREIGN KEY(fk_category_id)
-		REFERENCES category(category_id)
-		ON DELETE SET NULL
+CREATE TABLE products(
+id bigserial primary key NOT NULL,
+name varchar(50) NOT NULL,
+brand varchar(50),
+photo varchar,
+length float NOT NULL,
+unit unitEnum,
+color varchar(30),
+description varchar NOT NULL,
+price float NOT NULL,
+fk_categories_id int not NULL,
+fk_subcategories_id int not NULL,
+fk_users_id int not NULL,
+CONSTRAINT fk_categories_id
+	FOREIGN KEY(fk_categories_id)
+		REFERENCES categories(id)
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-CONSTRAINT fk_subcategory_id
-	FOREIGN KEY(fk_subcategory_id)
-		REFERENCES subcategory(subcategory_id)
-		ON DELETE SET NULL
+CONSTRAINT fk_subcategories_id
+	FOREIGN KEY(fk_subcategories_id)
+		REFERENCES subcategories(id)
+		ON DELETE CASCADE 
+		ON UPDATE CASCADE,
+CONSTRAINT fk_users_id
+	FOREIGN KEY(fk_users_id)
+		REFERENCES users(id)
+		ON DELETE CASCADE
 		ON UPDATE CASCADE
 ADD CONSTRAINT fk_client_id
 	FOREIGN KEY(fk_client_id)
@@ -129,29 +128,29 @@ ADD CONSTRAINT fk_client_id
 		ON UPDATE CASCADE
 );
 
-INSERT INTO product (product_name, product_brand, product_photo, product_length, product_unit, product_color, product_description, product_price, fk_category_id, fk_subcategory_id)
+INSERT INTO products (name, brand, photo, length, unit, color, description, price, fk_categories_id, fk_subcategories_id, fk_users_id)
 VALUES
-('Vetoketju', NULL, 'https://ibb.co/cyvYpQg', '15', 'cm', 'punainen', 'Punainen pitsivetoketju, 15 cm pitkä. Ovh 2€, nyt puoleen hintaan', '1', '2', '10'),
-('Vihreitä nappeja', NULL, 'https://ibb.co/s25F60h', '1', 'cm', 'vihreä', 'Lajitelma vihreitä nappeja, noin 1 cm halkaisija', '1.5', '2', '9'),
-('Metsolan bunny kangas', 'Metsola', 'https://ibb.co/DpDvkjb', '150', 'cm', 'vaaleansininen', 'Suosittu Metsolan pupukangas, pesemätön ja virheetön. 1,5m', '39', '1', '1'),
-('Uusia nypylöitä 100 kpl', NULL, 'https://ibb.co/GWQmB0r', '12', 'cm', 'puunvärinen', 'Käyttämättömiä nypylöitä', '79', '5', '20')
+('Vetoketju', NULL, 'https://ibb.co/cyvYpQg', '15', 'cm', 'punainen', 'Punainen pitsivetoketju, 15 cm pitkä. Ovh 2€, nyt puoleen hintaan', '1', '2', '10', '1'),
+('Vihreitä nappeja', NULL, 'https://ibb.co/s25F60h', '1', 'cm', 'vihreä', 'Lajitelma vihreitä nappeja, noin 1 cm halkaisija', '1.5', '2', '9', '1'),
+('Metsolan bunny kangas', 'Metsola', 'https://ibb.co/DpDvkjb', '150', 'cm', 'vaaleansininen', 'Suosittu Metsolan pupukangas, pesemätön ja virheetön. 1,5m', '39', '1', '1', '1'),
+('Uusia nypylöitä 100 kpl', NULL, 'https://ibb.co/GWQmB0r', '12', 'cm', 'puunvärinen', 'Käyttämättömiä nypylöitä', '79', '5', '20', '2')
 ;
 
 
 
-create table bid (
-bid_id serial primary key,
-fk_product_id int,
-fk_client_id int,
+create table bids (
+id bigserial primary key,
+fk_products_id int,
+fk_users_id int,
 bid_time timestamp,
-CONSTRAINT fk_product_id
-	FOREIGN KEY(fk_product_id)
-		REFERENCES product(product_id)
+CONSTRAINT fk_products_id
+	FOREIGN KEY(fk_products_id)
+		REFERENCES products(id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-CONSTRAINT fk_client_id
-	FOREIGN KEY(fk_client_id)
-		REFERENCES client(client_id)
+CONSTRAINT fk_users_id
+	FOREIGN KEY(fk_users_id)
+		REFERENCES users(id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -164,3 +163,4 @@ VALUES
 ('3', '2', CURRENT_TIMESTAMP + '1 hour')
 ;
 
+https://www.youtube.com/watch?v=vxu1RrR0vbw&t=3711s

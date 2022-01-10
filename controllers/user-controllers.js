@@ -4,6 +4,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {jwtTokens} from "../utils/jwt-helpers.js";
 
+export const index = (req, res) => {
+    res.send(200).json({message: "Welcome!"});
+};
 
 export const getProducts = async (req, res) => {
     try{
