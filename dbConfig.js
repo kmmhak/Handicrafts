@@ -1,9 +1,9 @@
-
-import pg  from "pg";
-const {Pool} = pg;
 import dotenv from "dotenv";
-
 dotenv.config();
+import process from "process";
+import pkg from "pg";
+
+const { Pool } = pkg;
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -13,10 +13,5 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
-const poolConfig = process.env.DATABASE_URL ? {
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-} : localPoolConfig;
 
-const pool = new Pool(poolConfig);
 export default pool;

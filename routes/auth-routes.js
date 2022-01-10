@@ -3,11 +3,14 @@ import pool from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {jwtTokens} from "../utils/jwt-helpers.js";
+import { login } from "../controllers/auth-controllers.js";
+
 
 
 const router = express.Router();
 
-
+router.post("login", login);
+/*
 router.post("/login", async (req, res) => {
     try {
         const {username, password} = req.body;
@@ -24,13 +27,14 @@ router.post("/login", async (req, res) => {
     } catch (error) {
         res.status(401).json({error:error.message});
     }
-});
+});*/
 
 
 
 router.get("/products", async (req, res) => {
     try{
-        const products = await pool.query("SELECT * FROM product");
+        const products = await pool.query(`SELECT 
+                                          * FROM product`);
         res.json({products : products.rows});        
     } catch (error){
         res.status(500).json({error:error.message});        
