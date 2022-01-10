@@ -40,23 +40,53 @@ app.use(passport.session());
 //});
 
 app.get("/", (req, res) => {
-    res.status(200).json({message: "hello"});
+    res.status(200).json({message: "Welcome"});
 });
 
-app.get("/users/myPage", checkAuthenticated, (req, res) => {
+//TOIMII!!!!!
+
+app.get("/users/myPage", checkAuthenticated,(req, res) => {
+    res.status(200).json({message: `welcome to your page ${req.user.email}`});
+});
+
+app.get("/users/myWares", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+    
     pool.query(
-        "SELECT * FROM users", 
+        `SELECT * 
+        FROM products
+        WHERE fk_users_id = $1`,
+        [user_id], 
         (err, results) => {
             if (err) {
                 res.status(500).json({message: "Sorry, server error"});
             }
-            console.log(req.user);
             res.status(200).json({message: results.rows});
         }
     );
         
     
 });
+
+app.get("/users/waresByUser", (req, res) => {
+    const user_id = req.body.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM products
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
+});
+
 /*
 app.get("/users/register", checkAuthenticated, (req, res) => {
     res.render("register");
