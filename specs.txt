@@ -1,22 +1,21 @@
 Kaikki käyttäjät:
  ✓   GET kaikkien kohteiden haku
-
+ ✓	 GET toisen käyttäjän myyntikohteiden haku
  ✓   POST käyttäjän luominen
 
 Kaikki kirjautuneet käyttäjät:
     
  ✓   POST login 
-    POST myynti-ilmoitusten teko
-    POST ostojen teko ja jonottaminen
+ ✓   POST myynti-ilmoitusten teko
+ ✓   POST ostojen teko ja jonottaminen
 
     DELETE oman käyttäjätunnuksen poistaminen
-    DELETE oman myyntikohteen poistaminen
+ ✓  DELETE oman myyntikohteen poistaminen
 
-    GET kaikkien kohteiden haku
-    GET omien myyntikohteiden haku
-    GET toisen käyttäjän myyntikohteiden haku
+ ✓  GET omien myyntikohteiden haku    
     GET haku otsikon/osaston/kuvauksen perusteella
     GET omien ostojen ja jonotettavien tavaroiden haku
+ ✓	GET logout
 
     PUT käyttäjän omien ilmoitusten päivittäminen
     PUT käyttäjän omien tietojen päivittäminen
@@ -121,11 +120,7 @@ CONSTRAINT fk_users_id
 		REFERENCES users(id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-ADD CONSTRAINT fk_client_id
-	FOREIGN KEY(fk_client_id)
-		REFERENCES client(client_id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
+
 );
 
 INSERT INTO products (name, brand, photo, length, unit, color, description, price, fk_categories_id, fk_subcategories_id, fk_users_id)
@@ -155,12 +150,12 @@ CONSTRAINT fk_users_id
 		ON UPDATE CASCADE
 );
 
-INSERT INTO bid (fk_product_id, fk_client_id, bid_time)
+INSERT INTO bids (fk_products_id, fk_users_id, bid_time)
 VALUES
-('1', '1', CURRENT_TIMESTAMP),
-('1', '2', CURRENT_TIMESTAMP + '1 minute'),
-('2', '1', CURRENT_TIMESTAMP),
-('3', '2', CURRENT_TIMESTAMP + '1 hour')
+('5', '1', CURRENT_TIMESTAMP),
+('5', '2', CURRENT_TIMESTAMP + '1 minute'),
+('6', '1', CURRENT_TIMESTAMP),
+('7', '2', CURRENT_TIMESTAMP + '1 hour')
 ;
 
 https://www.youtube.com/watch?v=vxu1RrR0vbw&t=3711s
