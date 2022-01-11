@@ -17,7 +17,7 @@ initializePassport(passport);
 
 const PORT = process.env.PORT || 4000 ;
 
-//app.set("view engine", "ejs");
+
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
@@ -33,49 +33,137 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//app.use(flash());
-
-//app.get("/", (req, res) => {
-//    res.render("index");
-//});
 
 app.get("/", (req, res) => {
-    res.status(200).json({message: "hello"});
+    res.status(200).json({message: "Welcome"});
 });
 
-app.get("/users/myPage", checkAuthenticated, (req, res) => {
+
+
+app.get("/users/myPage", checkAuthenticated,(req, res) => {
+    res.status(200).json({message: `welcome to your page ${req.user.email}`});
+});
+
+app.get("/users/myWares", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+    
     pool.query(
-        "SELECT * FROM users", 
+        `SELECT * 
+        FROM products
+        WHERE fk_users_id = $1`,
+        [user_id], 
         (err, results) => {
             if (err) {
                 res.status(500).json({message: "Sorry, server error"});
             }
-            console.log(req.user);
             res.status(200).json({message: results.rows});
         }
     );
         
     
 });
-/*
-app.get("/users/register", checkAuthenticated, (req, res) => {
-    res.render("register");
+
+app.get("/users/waresByUser", (req, res) => {
+    const user_id = req.body.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM products
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
 });
 
-app.get("/users/login", checkAuthenticated, (req, res) => {
-    res.render("login");
+app.get("/users/ownBids", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM bids
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
 });
 
-app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-    res.status(200).json({message: "registered"});
-    //res.render("dashboard", { user: req.user.name});
+app.get("/users/bidsByUser", (req, res) => {
+    const user_id = req.body.id;
+    
+    pool.query(
+        `SELECT * 
+        FROM bids
+        WHERE fk_users_id = $1`,
+        [user_id], 
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
 });
 
+app.post("/users/newBid", (req, res) => {
+    const user_id = req.user.id;
+    const product_id = req.body.id;
+    const now = new Date();
+    
+    pool.query(
+        `INSERT INTO bids
+        (fk_products_id, fk_users_id, bid_time)
+        VALUES ($1, $2, $3)`,
+        [product_id, user_id, now],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+        
+            res.status(200).json({message: "bid added successfully"});
+        }
+    ); 
+});
+
+app.post("/users/newProduct", checkAuthenticated, (req, res) => {
+    const { name, brand, photo, length, unit, color,description, price, category, subcategory } =req.body;
+    const user_id = req.user.id;
+ 
+    
+    pool.query(
+        `INSERT INTO products 
+        (name, brand, photo, length, unit, color, description, price, fk_categories_id, fk_subcategories_id, fk_users_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, 
+        [name, brand, photo, length, unit, color,description, price, category, subcategory, user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+        
+            res.status(200).json({message: "product added successfully"});
+        }
+    ); 
+});
 
 app.get("/users/logout", (req, res) => {
     req.logout();
-    res.render("index", { message: "You have logged out successfully" });
-});*/
+    res.status(200).json({ message: "You have logged out successfully" });
+});
 
 app.post("/users/register", async (req, res) => {
     let {name, email, password, password2 } = req.body;
@@ -121,7 +209,7 @@ app.post("/users/register", async (req, res) => {
 
                 if(results.rows.length > 0) {
                     res.status(400).json({message: "Email already in use"});
-                    //  res.render("register", {errors});
+                   
                 } else {
                     const role = "regular";
                     pool.query(
