@@ -17,7 +17,7 @@ initializePassport(passport);
 
 const PORT = process.env.PORT || 4000 ;
 
-//app.set("view engine", "ejs");
+
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
@@ -120,6 +120,26 @@ app.get("/users/bidsByUser", (req, res) => {
     
 });
 
+app.post("/users/newBid", (req, res) => {
+    const user_id = req.user.id;
+    const product_id = req.body.id;
+    const now = new Date();
+    
+    pool.query(
+        `INSERT INTO bids
+        (fk_products_id, fk_users_id, bid_time)
+        VALUES ($1, $2, $3)`,
+        [product_id, user_id, now],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+        
+            res.status(200).json({message: "bid added successfully"});
+        }
+    ); 
+});
+
 app.post("/users/newProduct", checkAuthenticated, (req, res) => {
     const { name, brand, photo, length, unit, color,description, price, category, subcategory } =req.body;
     const user_id = req.user.id;
@@ -132,7 +152,7 @@ app.post("/users/newProduct", checkAuthenticated, (req, res) => {
         [name, brand, photo, length, unit, color,description, price, category, subcategory, user_id],
         (err, results) => {
             if (err) {
-                throw err;
+                res.status(500).json({message: "Sorry, server error"});
             }
         
             res.status(200).json({message: "product added successfully"});
