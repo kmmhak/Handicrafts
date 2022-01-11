@@ -4,12 +4,8 @@ dotenv.config();
 import pool from "./dbConfig.js";
 import bcrypt from "bcrypt";
 import session from "express-session";
-
 import passport from "passport";
 import initializePassport from "./passportConfig.js";
-
-
-
 
 const app = express();
 
@@ -120,7 +116,7 @@ app.get("/users/bidsByUser", (req, res) => {
     
 });
 
-app.post("/users/newBid", (req, res) => {
+app.post("/users/newBid", checkAuthenticated, (req, res) => {
     const user_id = req.user.id;
     const product_id = req.body.id;
     const now = new Date();
@@ -158,6 +154,63 @@ app.post("/users/newProduct", checkAuthenticated, (req, res) => {
             res.status(200).json({message: "product added successfully"});
         }
     ); 
+});
+
+app.delete("/users/deleteProduct", checkAuthenticated, async (req, res) => {
+    const product_id = req.body.id;
+    const user_id = ~~(req.user.id);
+    
+    const response = await pool.query(
+        `SELECT * FROM products
+            WHERE id = $1`,
+        [product_id]).catch((err) => {
+        console.error(err);
+    });
+
+    if (response.rows.length === 0) {
+        res.status(404).json({message: "Sorry, could not find product"});
+    } else {
+                
+        const pool_user_id = response.rows[0].fk_users_id;
+
+        if (user_id === pool_user_id) {
+        
+            pool.query(
+                `DELETE FROM products
+            WHERE id = $1`,
+                [product_id],
+                (err, results) => {
+                    if (err) {
+                        res.status(500).json({message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({message: `Product with id ${product_id} deleted`});
+                    }
+                }
+            
+            );
+        } else {
+            res.status(404).json({message: "Sorry, you can only delete your own products"});
+        }
+    }
+});
+
+
+
+app.delete("/users/deleteUser", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+
+    pool.query(
+        `DELETE FROM users
+        WHERE id = $1`,
+        [user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: "Could not delete your user account"});
+            } else {
+                res.status(200).json({message: "Your account was deleted"});
+            }
+        }
+    );
 });
 
 app.get("/users/logout", (req, res) => {
