@@ -4,14 +4,8 @@ dotenv.config();
 import pool from "./dbConfig.js";
 import bcrypt from "bcrypt";
 import session from "express-session";
-
 import passport from "passport";
 import initializePassport from "./passportConfig.js";
-
-
-
-
-
 
 const app = express();
 
@@ -201,17 +195,23 @@ app.delete("/users/deleteProduct", checkAuthenticated, async (req, res) => {
 });
 
 
-/*
-app.delete("users/deleteUser", checkAuthenticated, (req, res) => {
-    if (req.user.id === "admin") {
-        const user_id = req.body.id;
-    } else {
-        const user_id = req.user.id;
-    }
 
-    console.log(user_id);
+app.delete("/users/deleteUser", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
 
-}); */
+    pool.query(
+        `DELETE FROM users
+        WHERE id = $1`,
+        [user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: "Could not delete your user account"});
+            } else {
+                res.status(200).json({message: "Your account was deleted"});
+            }
+        }
+    );
+});
 
 app.get("/users/logout", (req, res) => {
     req.logout();
