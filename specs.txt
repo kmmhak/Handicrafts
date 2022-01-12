@@ -1,23 +1,22 @@
 
 Kaikki käyttäjät:
  ✓   GET kaikkien kohteiden haku
- ✓	GET toisen käyttäjän myyntikohteiden haku
+ ✓	 GET toisen käyttäjän myyntikohteiden haku
  ✓   POST käyttäjän luominen
  ✓	POST login
 
-Kaikki kirjautuneet käyttäjät:  
-     
+Kaikki kirjautuneet käyttäjät:
+    
+ ✓   POST login 
  ✓   POST myynti-ilmoitusten teko
  ✓   POST ostojen teko ja jonottaminen
 
  ✓  DELETE oman käyttäjätunnuksen poistaminen
  ✓  DELETE oman myyntikohteen poistaminen
 
- ✓  GET oma etusivu
  ✓  GET omien myyntikohteiden haku    
     GET haku otsikon/osaston/kuvauksen perusteella
  ✓   GET omien ostojen ja jonotettavien tavaroiden haku
-  ✓  GET muiden käytäjien ostojen ja jonotettavien tavaroiden haku
  ✓	GET logout
 
     PUT käyttäjän omien ilmoitusten päivittäminen
@@ -161,3 +160,20 @@ VALUES
 ;
 
 https://www.youtube.com/watch?v=vxu1RrR0vbw&t=3711s
+
+app.delete("/users/deleteUser", checkAuthenticated, (req, res) => {
+    const user_id = req.user.id;
+
+    pool.query(
+        `DELETE FROM users
+        WHERE id = $1`,
+        [user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: "Could not delete your user account"});
+            } else {
+                res.status(200).json({message: "Your account was deleted"});
+            }
+        }
+    );
+});
