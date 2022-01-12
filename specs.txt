@@ -1,20 +1,23 @@
+
 Kaikki käyttäjät:
  ✓   GET kaikkien kohteiden haku
- ✓	 GET toisen käyttäjän myyntikohteiden haku
+ ✓	GET toisen käyttäjän myyntikohteiden haku
  ✓   POST käyttäjän luominen
+ ✓	POST login
 
-Kaikki kirjautuneet käyttäjät:
-    
- ✓   POST login 
+Kaikki kirjautuneet käyttäjät:  
+     
  ✓   POST myynti-ilmoitusten teko
  ✓   POST ostojen teko ja jonottaminen
 
-    DELETE oman käyttäjätunnuksen poistaminen
+ ✓  DELETE oman käyttäjätunnuksen poistaminen
  ✓  DELETE oman myyntikohteen poistaminen
 
+ ✓  GET oma etusivu
  ✓  GET omien myyntikohteiden haku    
     GET haku otsikon/osaston/kuvauksen perusteella
-    GET omien ostojen ja jonotettavien tavaroiden haku
+ ✓   GET omien ostojen ja jonotettavien tavaroiden haku
+  ✓  GET muiden käytäjien ostojen ja jonotettavien tavaroiden haku
  ✓	GET logout
 
     PUT käyttäjän omien ilmoitusten päivittäminen
@@ -26,11 +29,10 @@ Admin
     DELETE kaikkien tarjousten poistaminen
 
     PUT kaikkien käyttäjien ilmoitusten muuttaminen
+	PUT admin-oikeuksien antaminen ja poistaminen
 
 Master
     PUT admin-oikeuksien antaminen
-
-
 TIETOKANNAN LUONTI
 
 create type roleEnum as enum ('regular', 'admin', 'master');
