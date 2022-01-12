@@ -11,33 +11,28 @@ const app = express();
 
 initializePassport(passport);
 
-const PORT = process.env.PORT || 4000 ;
-
+const PORT = process.env.PORT || 4000;
 
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
-    
+
         resave: false,
 
-        saveUninitialized: false
-
+        saveUninitialized: false,
     })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.get("/", (req, res) => {
-    res.status(200).json({message: "Welcome"});
+    res.status(200).json({ message: "Welcome" });
 });
-
 
 app.use("/users", usersRouter);
 
-
 app.listen(PORT, () => {
-    console.log( `Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
