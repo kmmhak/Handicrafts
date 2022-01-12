@@ -227,24 +227,16 @@ app.post("/users/register", async (req, res) => {
         password2
     });
 
-    let errors = [];
-
     if(!name || !email || !password || !password2) {
-        errors.push({ message: "Please enter all fields" });
         res.status(400).json({ message: "Please enter all fields" });
     }
 
     if(password.length < 6) {
-        errors.push({ message: "Password should be at least 6 characters" });
         res.status(400).json({ message: "Password should be at least 6 characters"});
     }
 
     if(password != password2) {
-        errors.push({ message: "Passwords do not match" });
         res.status(400).json({ message: "Passwords do not match"});
-    }
-    if(errors.length > 0) {
-        res.status(400).json({message: "errors occured"});
     } else {
         //Form validation has passed
         let hashedPassword = await bcrypt.hash(password, 10);
