@@ -49,6 +49,22 @@ app.get("/users/myPage", checkAuthenticated,(req, res) => {
     res.status(200).json({message: `welcome to your page ${req.user.email}`});
 });
 
+app.get("/users/allWares", (req, res) => {
+        
+    pool.query(
+        `SELECT * 
+        FROM products`,
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            }
+            res.status(200).json({message: results.rows});
+        }
+    );
+        
+    
+});
+
 app.get("/users/myWares", checkAuthenticated, (req, res) => {
     const user_id = req.user.id;
     
@@ -169,9 +185,7 @@ app.post("/users/register", async (req, res) => {
     if(password != password2) {
         errors.push({ message: "Passwords do not match" });
         res.status(400).json({ message: "Passwords do not match"});
-    }
-    if(errors.length > 0) {
-        res.status(400).json({message: "errors occured"});
+   
     } else {
         //Form validation has passed
         let hashedPassword = await bcrypt.hash(password, 10);
