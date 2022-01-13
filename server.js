@@ -34,10 +34,8 @@ app.get("/", (req, res) => {
     res.status(200).json({message: "Welcome"});
 });
 
-
-
 app.get("/users/myPage", checkAuthenticated,(req, res) => {
-    res.status(200).json({message: `welcome to your page ${req.user.email}`});
+    res.status(200).json({message: `welcome to your page ${req.user.name}`});
 });
 
 app.get("/users/myWares", checkAuthenticated, (req, res) => {
@@ -213,6 +211,208 @@ app.delete("/users/deleteUser", checkAuthenticated, (req, res) => {
     );
 });
 
+app.put("/users/updateYourInfo", checkAuthenticated, async (req, res) => {
+    const user_id = req.user.id;
+    const { name, email, password, password2 } =req.body;
+    
+    if(name){
+        
+        pool.query(
+            `UPDATE users
+            SET name = $1
+            WHERE id = $2`,
+            [name, user_id],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Could not update your name"});
+                } 
+                
+            }
+        );
+    }
+    
+    if(email) {
+        
+        const response = await pool.query(
+            `SELECT * FROM users
+                WHERE email = $1`,
+            [email]).catch((err) => {
+            console.error(err);
+        });
+
+        console.log(response.rows.length);
+        if (response.rows.length > 0) {
+            
+            res.status(400).json({message: "Email already in use"});
+        } else {
+
+            pool.query(
+                `UPDATE users
+                SET email = $1
+                WHERE id = $2`,
+                [email, user_id],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Could not update your email"});
+                    } 
+                    
+                }
+            );
+        }  
+    }
+    
+    if(password) {
+
+        if (!password2) {
+            res.status(400).json({ message: "Type in both passwords"});
+        }
+        if (!(password === password2)) {
+            res.status(400).json({ message: "Passwords do not match"});
+        } else {
+            
+            let hashedPassword = await bcrypt.hash(password, 10);
+            
+            pool.query(
+                `UPDATE users
+                SET password = $1
+                WHERE id = $2`,
+                [hashedPassword, user_id],
+                (err, results) => {
+                    if(err) {
+                        res.status(400).json({ message: "Could not change password"});
+                    }
+                }
+                
+            ); 
+        }
+    } 
+    res.status(200).json({ message: "You have updated your information successfully" });
+
+});
+
+app.put("/users/updateYourProductInfo", checkAuthenticated, async (req, res) => {
+    const { name, brand, photo, length, unit, color, description, price, product_id } =req.body;
+    const fk_categories_id = ~~(req.body.fk_categories_id);
+    const fk_subcategories_id = ~~(req.body.fk_subcategories_id);
+    const user_id = ~~(req.user.id);
+    
+    const response = await pool.query(
+        `SELECT * FROM products
+            WHERE id = $1`,
+        [product_id]).catch((err) => {
+        console.error(err);
+    });
+
+    if (response.rows.length === 0) {
+        res.status(404).json({message: "Sorry, could not find product"});
+    } else {
+        const pool_user_id = response.rows[0].fk_users_id;
+
+        if (user_id === pool_user_id){
+            
+            pool.query(
+                `UPDATE products 
+                    SET name = $1, 
+                    brand = $2,
+                    photo = $3, 
+                    length = $4,
+                    unit = $5,
+                    color = $6,
+                    description = $7,
+                    price = $8,
+                    fk_categories_id = $9,
+                    fk_subcategories_id = $10
+                    WHERE id = $11`, 
+                [name, 
+                    brand, 
+                    photo, 
+                    length, 
+                    unit, 
+                    color, 
+                    description, 
+                    price, 
+                    fk_categories_id, 
+                    fk_subcategories_id, 
+                    product_id],
+                (err, results) => {
+                    if (err) {
+                        res.status(500).json({message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({message: "product information changed successfully"});
+                    }
+                
+                }
+            ); 
+        } else {
+            res.status(404).json({message: "Sorry, you can only change your own products"});
+        }   
+        
+        
+    } 
+    
+    
+    
+    
+
+});
+
+app.put("/users/updateUserProductInfo", checkAuthenticated, checkAdmin, (req, res) => {
+    const { name, brand, photo, length, unit, color, description, price, product_id } =req.body;
+    const fk_categories_id = ~~(req.body.fk_categories_id);
+    const fk_subcategories_id = ~~(req.body.fk_subcategories_id);
+    
+    pool.query(
+        `UPDATE products 
+            SET name = $1, 
+            brand = $2,
+            photo = $3, 
+            length = $4,
+            unit = $5,
+            color = $6,
+            description = $7,
+            price = $8,
+            fk_categories_id = $9,
+            fk_subcategories_id = $10
+            WHERE id = $11`, 
+        [name, 
+            brand, 
+            photo, 
+            length, 
+            unit, 
+            color, 
+            description, 
+            price, fk_categories_id, 
+            fk_subcategories_id, product_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            } else {
+                res.status(200).json({message: "product information changed successfully"});
+            }
+        
+        }
+    ); 
+});
+
+app.put("/users/changeUserRole", checkAuthenticated, checkAdmin, (req, res) => {
+    const user_id = ~~(req.body.id);
+    const role = req.body.role;
+
+    pool.query(
+        `UPDATE users
+        SET role = $1
+        WHERE id = $2`,
+        [role, user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({message: "Sorry, server error"});
+            } else {
+                res.status(200).json({message: `User role changed successfully to ${role}`});
+            }
+        }
+    );
+});
+
 app.get("/users/logout", (req, res) => {
     req.logout();
     res.status(200).json({ message: "You have logged out successfully" });
@@ -298,6 +498,14 @@ function checkAuthenticated(req, res, next){
         next();
     }
     
+}
+
+function checkAdmin( req, res, next) {
+    if(req.user.role === "admin") {
+        next();
+    } else {
+        res.status(404).json({message: "You do not have admin status"});
+    }
 }
 /*
 function checkNotAuthenticated(req, res, next) {
