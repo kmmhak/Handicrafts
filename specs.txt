@@ -156,3 +156,20 @@ VALUES
 ('6', '1', CURRENT_TIMESTAMP),
 ('7', '2', CURRENT_TIMESTAMP + '1 hour')
 ;
+<<<<<<< HEAD
+=======
+
+https://www.youtube.com/watch?v=vxu1RrR0vbw&t=3711s
+
+                    brand = $2, 
+                    photo = $3, 
+                    length = $4, 
+                    unit = $5, 
+                    color = $6, 
+                    description = $7, 
+                    price = $8, 
+                    fk_categories_id = $9, 
+                    fk_subcategories_id = $10
+
+                    brand, photo, length, unit, color,description, price, category, subcategory
+>>>>>>> 1c9f138 (updated specs.txt)
