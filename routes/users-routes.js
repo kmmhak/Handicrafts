@@ -1,45 +1,64 @@
 import express from "express";
-import pool from "../db.js";
-import bcrypt from "bcrypt";
-//import {authenticateToken} from "../middleware/authorization.js";
-import { getProducts, registerClient } from "../controllers/user-controllers.js";
+//import { checkAuthenticated, checkAdmin } from "../controllers/auth-controllers.js";
+
+import { 
+    waresByUser, 
+    myPage, 
+    register, 
+    login, 
+    myWares, 
+    ownBids,
+    bidsByUser,
+    newBid,
+    newProduct,
+    deleteProduct,
+    deleteUser,
+    updateYourInfo,
+    updateYourProductInfo, 
+    updateUserProductInfo,
+    changeUserRole,
+    logout } from "../controllers/users-controllers.js";
 
 const router = express.Router();
 
-router.get("/products", getProducts); //Myös kirjautumattomat käyttäjät voivat nähdä kaikki tuotteet
 
-/*
+function checkAuthenticated(req, res, next){
+    if(req.isAuthenticated()) {
+        next();
+    }
+    
+}
 
-router.get("/products", async (req, res) => {
-    try{
-        const users = await pool.query("SELECT * FROM product");
-        res.json({users : users.rows});        
-    } catch (error){
-        res.status(500).json({error:error.message});        
+function checkAdmin( req, res, next) {
+    if(req.user.role === "admin") {
+        next();
+    } else {
+        res.status(404).json({message: "You do not have admin status"});
     }
-}); 
-*/
-/*
-router.get("/", authenticateToken, async (req, res) => {
-    try{
-        const users = await pool.query("SELECT * FROM product");
-        res.json({users : users.rows});        
-    } catch (error){
-        res.status(500).json({error:error.message});        
-    }
-}); */
-router.post("/register", registerClient);
-/*
-router.post("/register", async (req, res) => {
-    try{
-        const role = "regular";
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const newClient = await pool.query("INSERT INTO client (client_fname, client_lname, client_email, username, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-            [req.body.fname, req.body.lname, req.body.email, req.body.username, hashedPassword, role]);
-        res.json({Client: newClient.rows[0]});
-    } catch (error){
-        res.status(500).json({error:error.message});
-    }
-});*/
+}
+
+router.post("/register", register);
+router.post("/login", login);
+
+router.get("/myPage", checkAuthenticated, myPage);
+router.get("/waresByUser", waresByUser); 
+router.get("/myWares", checkAuthenticated, myWares);
+router.get("/ownBids", checkAuthenticated, ownBids);
+router.get("/bidsByUser", bidsByUser);
+router.get("/logout", logout);
+
+router.post("/newProduct", checkAuthenticated, newProduct);
+router.post("/newBid", checkAuthenticated, newBid);
+
+router.delete("/deleteProduct", checkAuthenticated, deleteProduct);
+router.delete("/deleteUser", checkAuthenticated, deleteUser);
+
+router.put("/updateYourInfo", checkAuthenticated, updateYourInfo);
+router.put("/updateYourProductInfo", checkAuthenticated, updateYourProductInfo);
+router.put("/updateUserProductInfo", checkAuthenticated, checkAdmin, updateUserProductInfo);
+router.put("/changeUserRole", checkAuthenticated, checkAdmin, changeUserRole);
+
+
 
 export default router;
+
