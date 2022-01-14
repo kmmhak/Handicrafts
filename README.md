@@ -1,6 +1,32 @@
 # käsityökauppa
 
-henkilökohtainen projekti
+A marketplace for selling and buying anything to do with handicrafts. 
+
+## Endpoints
+
+Endpoint                                    Method          Description
+/                                           GET             Front page of the shop
+/users/register                             POST            Registeration
+/users/login                                POST            Login
+/users/myPage                               GET             User's front page
+/users/myWares                              GET             User's own wares
+/users/waresByUser                          GET             Another user's wares
+/users/ownBids                              GET             User's own bids
+/users/bidsByUser                           GET             Another user's bids
+/users/newProduct                           POST            Put a new product on sale
+/users/newBid                               POST            Bid on a product
+/users/deleteProduct                        DELETE          Delete your own product
+/users/deleteUser                           DELETE          Delete your own user account
+/users/updateYourInfo                       PUT             Update your user information
+/users/updateYourProductInfo                PUT             Update your product information
+
+/users/updateUserProductInfo                PUT             Update another user's product info as admin
+/users/changeUserRole                       PUT             Update another user's role to admin or regular user as admin
+/users/deleteAnyUser                        DELETE          Delete another user as admin
+/users/deleteAnyProduct                     DELETE          Delete another user's product as admin
+/users/deleteAnyBid                         DELETE          Delete another user's bid as admin
+
+
 
 ## Getting started
 

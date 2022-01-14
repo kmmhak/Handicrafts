@@ -17,7 +17,10 @@ import {
     updateYourProductInfo, 
     updateUserProductInfo,
     changeUserRole,
-    logout } from "../controllers/users-controllers.js";
+    logout,
+    deleteAnyUser,
+    deleteAnyProduct,
+    deleteAnyBid } from "../controllers/users-controllers.js";
 
 const router = express.Router();
 
@@ -55,10 +58,13 @@ router.delete("/deleteUser", checkAuthenticated, deleteUser);
 
 router.put("/updateYourInfo", checkAuthenticated, updateYourInfo);
 router.put("/updateYourProductInfo", checkAuthenticated, updateYourProductInfo);
+
 router.put("/updateUserProductInfo", checkAuthenticated, checkAdmin, updateUserProductInfo);
 router.put("/changeUserRole", checkAuthenticated, checkAdmin, changeUserRole);
 
-
+router.delete("/deleteAnyUser", checkAuthenticated, checkAdmin, deleteAnyUser);
+router.delete("/deleteAnyProduct", checkAuthenticated, checkAdmin, deleteAnyProduct);
+router.delete("/deleteAnyBid", checkAuthenticated, checkAdmin, deleteAnyBid);
 
 export default router;
 

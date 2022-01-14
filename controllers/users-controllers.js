@@ -439,3 +439,54 @@ export const changeUserRole = (req, res) => {
         }
     );
 };
+
+export const deleteAnyUser = (req, res) => {
+    const user_id = req.body.id;
+
+    pool.query(
+        `DELETE FROM users
+        WHERE id = $1`,
+        [user_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: "Could not delete user account"});
+            } else {
+                res.status(200).json({message: `You deleted the user with id ${user_id}` });
+            }
+        }
+    );
+};
+
+export const deleteAnyProduct = (req, res) => {
+    const product_id = req.body.id;
+
+    pool.query(
+        `DELETE FROM products
+        WHERE id = $1`,
+        [product_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: `Could not delete product with id ${product_id}`});
+            } else {
+                res.status(200).json({message: `You deleted the product with id ${product_id}` });
+            }
+        }
+    );
+};
+
+export const deleteAnyBid = (req, res) => {
+    const bid_id = req.body.id;
+
+    pool.query(
+        `DELETE FROM bids
+        WHERE id = $1`,
+        [bid_id],
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ message: `Could not delete bid with id ${bid_id}`});
+            } else {
+                res.status(200).json({message: `You deleted the bid with id ${bid_id}`});
+            }
+        }
+    );
+};

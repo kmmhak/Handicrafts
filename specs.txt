@@ -16,18 +16,18 @@ Kaikki kirjautuneet käyttäjät:
 
  ✓  GET omien myyntikohteiden haku    
     GET haku otsikon/osaston/kuvauksen perusteella
- ✓   GET omien ostojen ja jonotettavien tavaroiden haku
+ ✓  GET omien ostojen ja jonotettavien tavaroiden haku
  ✓	GET logout
 
  ✓  PUT käyttäjän omien ilmoitusten päivittäminen
  ✓  PUT käyttäjän omien tietojen päivittäminen
 
 Admin
-    DELETE kaikkien käyttäjien poistaminen
-    DELETE kaikkien myyntikohteiden poistaminen
-    DELETE kaikkien tarjousten poistaminen
+ ✓  DELETE kaikkien käyttäjien poistaminen
+ ✓  DELETE kaikkien myyntikohteiden poistaminen
+ ✓  DELETE kaikkien tarjousten poistaminen
 
- ✓   PUT kaikkien käyttäjien ilmoitusten muuttaminen
+ ✓  PUT kaikkien käyttäjien ilmoitusten muuttaminen
  ✓	PUT admin-oikeuksien antaminen ja poistaminen
 
 TIETOKANNAN LUONTI
@@ -156,17 +156,3 @@ VALUES
 ('6', '1', CURRENT_TIMESTAMP),
 ('7', '2', CURRENT_TIMESTAMP + '1 hour')
 ;
-
-https://www.youtube.com/watch?v=vxu1RrR0vbw&t=3711s
-
-                    brand = $2, 
-                    photo = $3, 
-                    length = $4, 
-                    unit = $5, 
-                    color = $6, 
-                    description = $7, 
-                    price = $8, 
-                    fk_categories_id = $9, 
-                    fk_subcategories_id = $10
-
-                    brand, photo, length, unit, color,description, price, category, subcategory
