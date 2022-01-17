@@ -6,6 +6,8 @@ import passport from "passport";
 import initializePassport from "./passportConfig.js";
 
 import usersRouter from "./routes/users-routes.js";
+import productsRouter from "./routes/products-routes.js";
+import bidsRouter from "./routes/bids-routes.js";
 
 const app = express();
 
@@ -36,6 +38,8 @@ app.get("/", (req, res) => {
 
 
 app.use("/users", usersRouter);
+app.use("/products", productsRouter);
+app.use("/bids", bidsRouter);
 
 
 app.listen(PORT, () => {

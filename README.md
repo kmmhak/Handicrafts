@@ -9,6 +9,7 @@ Endpoint                                    Method          Description
 /users/register                             POST            Registeration
 /users/login                                POST            Login
 /users/myPage                               GET             User's front page
+/users/allWares                             GET             All wares on sale
 /users/myWares                              GET             User's own wares
 /users/waresByUser                          GET             Another user's wares
 /users/ownBids                              GET             User's own bids
