@@ -25,9 +25,9 @@ function checkAdmin( req, res, next) {
 }
 
 router.get("/ownBids", checkAuthenticated, ownBids);
-router.get("/bidsByUser", bidsByUser);
+router.get("/bidsByUser/:id", bidsByUser);
 router.post("/newBid", checkAuthenticated, newBid);
-router.delete("/deleteAnyBid", checkAuthenticated, checkAdmin, deleteAnyBid);
+router.delete("/deleteAnyBid/:id", checkAuthenticated, checkAdmin, deleteAnyBid);
 
 
 export default router;

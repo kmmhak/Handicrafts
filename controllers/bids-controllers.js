@@ -19,7 +19,7 @@ export const ownBids = (req, res) => {
 
 
 export const bidsByUser = (req, res) => {
-    const user_id = req.body.id;
+    const user_id = parseInt(req.params.id);
     
     pool.query(
         `SELECT * 
@@ -83,7 +83,7 @@ export const newBid = (req, res) => {
 
 
 export const deleteAnyBid = (req, res) => {
-    const bid_id = req.body.id;
+    const bid_id = parseInt(req.params.id);
 
     pool.query(
         `DELETE FROM bids

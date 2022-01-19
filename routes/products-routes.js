@@ -29,11 +29,11 @@ function checkAdmin( req, res, next) {
 }
 
 router.get("/allWares", allWares);
-router.get("/waresByUser", waresByUser);
+router.get("/waresByUser/:id", waresByUser);
 router.get("/myWares", checkAuthenticated, myWares);
 router.post("/newProduct", checkAuthenticated, newProduct);
 router.delete("/deleteProduct", checkAuthenticated, deleteProduct);
-router.delete("/deleteAnyProduct", checkAuthenticated, checkAdmin, deleteAnyProduct);
+router.delete("/deleteAnyProduct/:id", checkAuthenticated, checkAdmin, deleteAnyProduct);
 router.put("/updateYourProductInfo", checkAuthenticated, updateYourProductInfo);
 router.put("/updateUserProductInfo", checkAuthenticated, checkAdmin, updateUserProductInfo);
 

@@ -50,8 +50,7 @@ router.put("/updateYourInfo", checkAuthenticated, updateYourInfo);
 
 
 router.put("/changeUserRole", checkAuthenticated, checkAdmin, changeUserRole);
-
-router.delete("/deleteAnyUser", checkAuthenticated, checkAdmin, deleteAnyUser);
+router.delete("/deleteAnyUser/:id", checkAuthenticated, checkAdmin, deleteAnyUser);
 
 
 

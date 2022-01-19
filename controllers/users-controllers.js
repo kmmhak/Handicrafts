@@ -196,7 +196,7 @@ export const changeUserRole = (req, res) => {
 };
 
 export const deleteAnyUser = (req, res) => {
-    const user_id = req.body.id;
+    const user_id = parseInt(req.params.id);
 
     pool.query(
         `DELETE FROM users
