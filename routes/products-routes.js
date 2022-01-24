@@ -10,23 +10,9 @@ import {
     updateYourProductInfo,
     newProduct } from "../controllers/products-controllers.js";
 
+import { checkAuthenticated, checkAdmin } from "../middleware/middleware.js";
+
 const router = express.Router();
-
-
-function checkAuthenticated(req, res, next){
-    if(req.isAuthenticated()) {
-        next();
-    }
-    
-}
-
-function checkAdmin( req, res, next) {
-    if(req.user.role === "admin") {
-        next();
-    } else {
-        res.status(404).json({message: "You do not have admin status"});
-    }
-}
 
 router.get("/allWares", allWares);
 router.get("/waresByUser/:id", waresByUser);

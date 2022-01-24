@@ -2,22 +2,6 @@ import pool from "../dbConfig.js";
 import bcrypt from "bcrypt";
 import passport from "passport";
 
-export function checkAuthenticated() { (req, res, next) => {
-    if(req.isAuthenticated()) {
-        next();
-    }   
-};
-}
-
-
-export function checkAdmin() { (req, res, next) => {
-    if(req.user.role === "admin") {
-        next();
-    } else {
-        res.status(404).json({message: "You do not have admin status"});
-    }
-};
-}
 
 export const register = async (req, res) => {
     let {name, email, password, password2 } = req.body;

@@ -8,22 +8,9 @@ import {
     changeUserRole,
     deleteAnyUser } from "../controllers/users-controllers.js";
 
+import { checkAuthenticated, checkAdmin } from "../middleware/middleware.js";
+
 const router = express.Router();
-
-function checkAuthenticated(req, res, next){
-    if(req.isAuthenticated()) {
-        next();
-    }
-    
-}
-
-function checkAdmin( req, res, next) {
-    if(req.user.role === "admin") {
-        next();
-    } else {
-        res.status(404).json({message: "You do not have admin status"});
-    }
-}
 
 router.get("/myPage", checkAuthenticated, myPage);
 router.delete("/deleteUser", checkAuthenticated, deleteUser);
