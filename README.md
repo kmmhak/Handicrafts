@@ -1,8 +1,8 @@
 # Kiku's handicrafts store
 
-A marketplace for selling and buying anything to do with handicrafts. User can search for something to buy, put products on sale, make bids on items and stay in queue for an item in case the previous buyer changes their mind. Users can send messages to the seller to ask questions about their wares. 
+A marketplace for selling and buying anything to do with handicrafts. User can search for something to buy (product title, description, minimum and maximum price, colour, minimum and maximum length, category, subcategory) and as logged in users put products on sale, make bids on items and stay in queue for an item in case the previous buyer changes their mind. Users can send messages to the seller to ask questions about their wares. 
 
-This project is a training exercize in Buutti's Trainee Academy (January 2022).
+This project is a training exercise in Buutti's Trainee Academy (January 2022).
 
 ## Endpoints
 
@@ -29,6 +29,7 @@ This project is a training exercize in Buutti's Trainee Academy (January 2022).
 
 |Products endpoints| Method | Description |
 |-------|-------|------|
+|/products/search | GET | Search wares based on name, brand, color, description, minimum and maximun length and price, category and subcategory |
 |/products/allWares     |                        GET     |        All wares on sale|
 |/products/myWares      |                        GET      |       User's own wares|
 |/products/waresByUser/{id}   |                       GET     |        Another user's wares|
@@ -36,7 +37,7 @@ This project is a training exercize in Buutti's Trainee Academy (January 2022).
 |/products/updateYourProductInfo   |             PUT      |       Update your product information|
 |/products/updateUserProductInfo    |            PUT       |      Update another user's product info as admin|
 |/products/deleteProduct      |                  DELETE   |       Delete your own product|
-|/users/deleteAnyProduct/{id}    |                 DELETE     |     Delete another user's product as admin|
+|/products/deleteAnyProduct/{id}    |                 DELETE     |     Delete another user's product as admin|
 
 
 |Bids endpoints| Method | Description |

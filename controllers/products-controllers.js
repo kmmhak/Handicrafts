@@ -143,7 +143,7 @@ export const deleteAnyProduct = (req, res) => {
 
 
 export const updateYourProductInfo = async (req, res) => {
-    const{ name, brand, photo, length, unit, color, description, price, product_id } =req.body;
+    const { name, brand, photo, length, unit, color, description, price, product_id } =req.body;
     const fk_categories_id = ~~(req.body.fk_categories_id);
     const fk_subcategories_id = ~~(req.body.fk_subcategories_id);
     const user_id = ~~(req.user.id);
@@ -251,4 +251,256 @@ export const newProduct = (req, res) => {
             res.status(200).json({message: "product added successfully"});
         }
     ); 
+};
+
+export const search = (req, res) => {
+
+    const { lengthMin, lengthMax, priceMin, priceMax, category_id, subcategory_id } =req.body;
+    let { name, brand,  color, description } = req.body;
+
+    if(name){
+        
+        name = "%" + name + "%";
+
+        pool.query(
+            `SELECT * 
+            FROM products
+            WHERE name iLIKE $1`,
+            [name],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+                
+            }
+        );
+    } else if(brand){
+        
+        brand = "%" + brand + "%";
+        pool.query(
+            `SELECT * 
+            FROM products
+            WHERE brand iLIKE $1`,
+            [brand],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+                
+            }
+        );
+    } else if(lengthMin || lengthMax){
+        
+        if (lengthMin && lengthMax) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE length BETWEEN $1 AND $2`,
+                [lengthMin, lengthMax],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+
+        }
+        
+        if (lengthMin) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE length >= $1`,
+                [lengthMin],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+        }
+
+        if (lengthMax) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE length <= $1`,
+                [lengthMax],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+        }
+        
+
+    } else if(color){
+        
+        color = "%" + color + "%";
+
+        pool.query(
+            `SELECT * 
+        FROM products
+        WHERE color iLIKE $1`,
+            [color],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+            
+            }
+        );
+    } else if(description){
+    
+        description = "%" + description + "%";
+
+        pool.query(
+            `SELECT * 
+        FROM products
+        WHERE description iLIKE $1`,
+            [description],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+            
+            }
+        );
+    } else if(priceMin || priceMax){
+        
+        if (priceMin && priceMax) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE price BETWEEN $1 AND $2`,
+                [priceMin, priceMax],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+
+        }
+        
+        if (priceMin) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE price >= $1`,
+                [priceMin],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+        }
+
+        if (priceMax) {
+            
+            pool.query(
+                `SELECT * 
+                FROM products
+                WHERE price <= $1`,
+                [priceMax],
+                (err, results) => {
+                    if(err) {
+                        res.status(500).json({ message: "Sorry, server error"});
+                    } else {
+                        res.status(200).json({ message: results.rows});
+                    }
+                    
+                }
+            );
+        }
+
+
+    } else if(category_id){
+  
+        pool.query(
+            `SELECT 
+            products.name, 
+            brand, 
+            photo, 
+            length, 
+            unit, 
+            color, 
+            description, 
+            price, 
+            fk_users_id AS seller, 
+            categories.name AS category
+            FROM products
+            LEFT JOIN categories ON categories.id = products.fk_categories_id
+            LEFT JOIN subcategories ON subcategories.id = products.fk_subcategories_id
+            WHERE categories.id = $1`,
+            [category_id],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+            
+            }
+        );
+    } else if(subcategory_id){
+  
+        pool.query(
+            `SELECT 
+            products.name, 
+            brand, 
+            photo, 
+            length, 
+            unit, 
+            color, 
+            description, 
+            price, 
+            fk_users_id AS seller, 
+            categories.name AS category,
+            subcategories.name AS subcategories
+            FROM products
+            LEFT JOIN categories ON categories.id = products.fk_categories_id
+            LEFT JOIN subcategories ON subcategories.id = products.fk_subcategories_id
+            WHERE categories.id = $1`,
+            [subcategory_id],
+            (err, results) => {
+                if(err) {
+                    res.status(500).json({ message: "Sorry, server error"});
+                } else {
+                    res.status(200).json({ message: results.rows});
+                }
+            
+            }
+        );
+    }
 };
