@@ -1,6 +1,6 @@
 # Kiku's handicrafts store
 
-A marketplace for selling and buying anything to do with handicrafts. User can search for something to buy (product title, description, minimum and maximum price, colour, minimum and maximum length, category, subcategory) and as logged in users put products on sale, make bids on items and stay in queue for an item in case the previous buyer changes their mind. Users can send messages to the seller to ask questions about their wares. 
+A marketplace for selling and buying anything to do with handicrafts. User can search for something to buy (product title, description, minimum and maximum price, colour, minimum and maximum length, category, subcategory) and as logged in users can put products on sale, make bids on items and stay in queue for an item in case the previous buyer changes their mind. Users can send messages to the seller to ask questions about their wares. 
 
 This project is a training exercise in Buutti's Trainee Academy (January 2022).
 
@@ -8,44 +8,44 @@ This project is a training exercise in Buutti's Trainee Academy (January 2022).
 
 |Root endpoint| Method | Description |
 |-------|-------|------|
-|/ |                                          GET |            Front page of the shop|
+|/ | GET | Front page of the shop|
 
 
 |Auth endpoints| Method | Description |
 |-------|-------|------|
-|/auth/register                   |          POST   |         Registeration|
-|/auth/login         |                       POST    |        Login|
+|/auth/register | POST  | Registeration|
+|/auth/login | POST  | Login|
 |/auth/logout | GET | Logout |
 
 
 |Users endpoints| Method | Description |
 |-------|-------|------|
-|/users/myPage        |                       GET     |        User's front page|
-|/users/updateYourInfo      |                 PUT       |      Update your user information|
-|/users/changeUserRole    |                   PUT      |       Update another user's role to admin or regular user as admin|
-|/users/deleteUser        |                   DELETE   |       Delete your own user account|
-|/users/deleteAnyUser         |               DELETE      |    Delete another user as admin|
+|/users/myPage |  GET | User's front page|
+|/users/updateYourInfo | PUT | Update your user information|
+|/users/changeUserRole | PUT | Update another user's role to admin or regular user as admin|
+|/users/deleteUser | DELETE | Delete your own user account|
+|/users/deleteAnyUser | DELETE | Delete another user as admin|
 
 
 |Products endpoints| Method | Description |
 |-------|-------|------|
-|/products/search | GET | Search wares based on name, brand, color, description, minimum and maximun length and price, category and subcategory |
-|/products/allWares     |                        GET     |        All wares on sale|
-|/products/myWares      |                        GET      |       User's own wares|
-|/products/waresByUser/{id}   |                       GET     |        Another user's wares|
-|/products/newProduct     |                      POST     |       Put a new product on sale|
-|/products/updateYourProductInfo   |             PUT      |       Update your product information|
-|/products/updateUserProductInfo    |            PUT       |      Update another user's product info as admin|
-|/products/deleteProduct      |                  DELETE   |       Delete your own product|
-|/products/deleteAnyProduct/{id}    |                 DELETE     |     Delete another user's product as admin|
+|/products/search | GET | Search wares based on name, brand, color, description, minimum and maximun length and price, category or subcategory |
+|/products/allWares | GET | All wares on sale|
+|/products/myWares |GET | User's own wares|
+|/products/waresByUser/{id} | GET | Another user's wares|
+|/products/newProduct | POST | Put a new product on sale|
+|/products/updateYourProductInfo | PUT | Update your product information|
+|/products/updateUserProductInfo | PUT | Update another user's product info as admin|
+|/products/deleteProduct | DELETE | Delete your own product|
+|/products/deleteAnyProduct/{id} | DELETE | Delete another user's product as admin|
 
 
 |Bids endpoints| Method | Description |
 |-------|-------|------|
-|/bids/ownBids       |                       GET     |        User's own bids|
-|/bids/bidsByUser/{id}     |                      GET     |        Another user's bids|
-|/bids/newBid          |                     POST     |       Bid on a product|
-|/users/deleteAnyBid/{id}                 |        DELETE    |      Delete another user's bid as admin|
+|/bids/ownBids | GET | User's own bids|
+|/bids/bidsByUser/{id}| GET | Another user's bids|
+|/bids/newBid | POST | Bid on a product|
+|/users/deleteAnyBid/{id} | DELETE | Delete another user's bid as admin|
 
 
 |Messages endpoints| Method | Description |
